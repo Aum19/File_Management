@@ -1,8 +1,19 @@
-import numpy as np
-import pandas as pd
-from Levenshtein import levenshtein_lru, levenshtein_no_lru
-import Recommend
+mport pandas as pd
+#import Recommend
+# import Recommend
 import timeit
+
+import pandas as pd
+
+from Levenshtein import levenshtein_lru, levenshtein_no_lru
+# import Recommend
+# import Recommend
+import timeit
+
+import pandas as pd
+
+from Levenshtein import levenshtein_lru, levenshtein_no_lru
+
 TEMP = 'C:/Users/N381554\Desktop\MFT_work'
 df = pd.read_excel('directory_df.xlsx')
 COHESION_ALPHA = 0.5
@@ -43,7 +54,7 @@ def create_features(path=None):
     df_dict = neighbour_cohesion(safe_df, unsafe_df, df)
     safe_df = df_dict.get('safe_df')
     unsafe_df = df_dict.get('unsafe_df')
-
+    unsafe_df, df = file_folder_affinity(unsafe_df, df, 'test.xlsx')
     unsafe_df.to_excel('unsafe.xlsx')
     safe_df.to_excel('safe.xlsx')
     df.to_excel('modified_directory_df.xlsx')
@@ -112,6 +123,23 @@ def neighbour_cohesion(safe_df, unsafe_df, df):
     elapsed = timeit.default_timer() - start_time
     print('neighbour_cohesion'+str(elapsed))
     return {'df': df, 'safe_df': safe_df, 'unsafe_df': unsafe_df}
+
+def file_folder_affinity(unsafe_df, df, features_path='test.xlsx'):
+    feature_df = pd.read_excel(features_path)
+    threshold = 0.1 #Future: make it dynamic user selected
+    df = df.assign(Size_compatibility=0)
+    unsafe_df = unsafe_df.assign(Size_compatibility=0)
+    unsafe_df = unsafe_df.assign(Size_compatibility_flag=False)
+    for row in unsafe_df.itertuples():
+        format_volume = row.Format+'_volume'
+        folder_row = feature_df[feature_df['Folder_path']==row.Folder_path]
+        delta = abs(float(folder_row[format_volume])-float(row.Size_MB))
+        if delta > 0:
+            unsafe_df.at[row.Index, 'Size_compatibility'] = delta
+            '''if delta>threshold*float(folder_row[format_volume]):
+                unsafe_df.at[row.Index, 'Size_compatibility_flag'] = True
+'''
+    return unsafe_df, df
 
 #Create a graph here
 def print_stats(safe_df, unsafe_df,df,out_file='results.txt'):

@@ -1,18 +1,12 @@
 # Bokeh Libraries
 from bokeh.io import output_file
-from bokeh.plotting import figure, show
-from bokeh.models import ColumnarDataSource
-from bokeh.models.widgets import Tabs, Panel
 from bokeh.models import HoverTool
-from bokeh.events import Tap
-from math import pi
-from bokeh.charts import Bar
+from bokeh.models.widgets import Tabs, Panel
+from bokeh.plotting import figure, show
+
+
 #from bokeh.transform import cumsum
 #from bokeh.palettes import Category20c
-import statistics
-import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
 
 def format_count_bar(df, metadata_dict=dict()):
     x = df['Format'].value_counts().to_dict()
@@ -72,6 +66,7 @@ def create_scatter_graph(df, metadata_dict=dict()):
 def bar_plot(data_dict, meta_data=dict()):
     data = {meta_data.get('X_label'):list(data_dict.keys()),
         meta_data.get('Y_label'): list(data_dict.values())}
+    '''
     size_format_fig = Bar(data,
         values=str(meta_data.get('Y_label')), 
         label=str(meta_data.get('X_label')),
@@ -80,23 +75,41 @@ def bar_plot(data_dict, meta_data=dict()):
         color=meta_data.get('color'),
         plot_height=500, 
         plot_width=800)
-    Size_format_panel = Panel(child=size_format_fig, title=meta_data.get('panel_title'))
+    '''
+    p = figure(x_range=meta_data.get('X_label'),plot_height=500,
+               plot_width=800, toolbar_location='Right', title=meta_data.get('plot_title'))
+    p.vbar(x=data.values(), top='counts', width=0.9, source=data, legend='top_right',
+       line_color='white', fill_color='blue')
+
+    p.xgrid.grid_line_color = None
+    p.y_range.start = 0
+    p.y_range.end = 9
+    p.legend.orientation = "horizontal"
+    p.legend.location = "top_center"
+
+    show(p)
+
+
+
+    Size_format_panel = Panel(child=p, title=meta_data.get('panel_title'))
     return Size_format_panel
 
 def get_panels(df, data_dict, metadata_dict=dict()):
     p1 = create_scatter_graph(df, metadata_dict=dict())
+    '''
     p2 = bar_plot(data_dict, {'X_label': 'Format',\
         'Y_label': 'Total Size',
         'plot_title': 'Format by Size',
         'color': 'red',
         'panel_title': 'Format by size'})
+    
     p3 = format_count_bar(df, {'X_label': 'Format',\
         'Y_label': 'Number of files',
         'plot_title': 'Format by Count',
         'color': 'green',
         'panel_title': 'Format by Count'})    # Assign the panels to Tabs
-
-    tabs = Tabs(tabs=[p1, p2, p3])
+    '''
+    tabs = Tabs(tabs=[p1])
 
     # Show the tabbed layout
     show(tabs)

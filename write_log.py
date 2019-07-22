@@ -1,9 +1,10 @@
 import datetime
+
 import pandas as pd
 
 Default_Log_File = 'C:/Users/N381554/Desktop/MFT_work/Files_moved_log.txt'
 sample = 'file_name,source,destination'
-DEFAULT_CONFIG_PATH = 'C:/Users/N381554/Desktop/MFT_work/configuration_set.xlsx'
+DEFAULT_CONFIG_PATH = 'C:/Users/Aum/Desktop/File_Management/configuration_set.xlsx'
 
 
 def write_to_file(log):
