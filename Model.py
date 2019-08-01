@@ -132,10 +132,4 @@ def pattern_filter(pattern_config_list, file_list=[]):
     return files_filtered
 
 
-def set_auto_move(new_state):
-    global AUTO_MOVE
-    AUTO_MOVE = new_state
-    print(AUTO_MOVE)
-
-
 '''Developed by Aum'''

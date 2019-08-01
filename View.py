@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import *
-
-import Controller
+from Model import start_config
 from Model import set_auto_move
+#import pandas
+from System_Analysis import start_analysis
+import Controller
 
 WINDOW_TITLE = "Directory Analysis"
 

@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface>
+  <object class="ttk.Frame" id="results_home">
+    <property name="height">800</property>
+    <property name="relief">flat</property>
+    <property name="width">1000</property>
+    <layout>
+      <property name="column">0</property>
+      <property name="propagate">True</property>
+      <property name="row">0</property>
+    </layout>
+    <child>
+      <object class="ttk.Label" id="">
+        <property name="background">#ffffff</property>
+        <property name="foreground">#ff0000</property>
+        <property name="justify">left</property>
+        <property name="relief">flat</property>
+        <property name="text" translatable="yes">Risk Folders</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+      </object>
+    </child>
+  </object>
+</interface>

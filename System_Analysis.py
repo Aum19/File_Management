@@ -90,6 +90,7 @@ class Plots:
         
 
 def add_parent_column(df):
+        df['Folder_path_raw'] = df.Folder_path
         df.Folder_path = df.Folder_path.str.replace('\\','/')
         df['Parent'] = df.Folder_path.str.split('/')
         df.Parent = df.Parent.str[-1:]
@@ -113,6 +114,6 @@ def start_analysis(crawl_path):
     size_1 = Size(file_data.df)
     format_total_size = size_1.size_by_format()
     dict_of_plots.get('bokeh').manage_plots(df_scatter, format_total_size, {'file_title':'Scatter Plots','fig_title':'Access_time vs Size'})
-    Scan_Duplicates.store_in_excel(file_data.df, 'directory_df.xlsx')
+    Scan_Duplicates.store_in_csv(file_data.df, 'directory_df.csv')
     return {'Files_Analyzed': str(len(format1.df)), 'Possible_Duplicates': duplicate_filter(format1.df)}
 #start_analysis(start_path)

@@ -1,10 +1,8 @@
 import datetime
-
 import pandas as pd
 
 Default_Log_File = 'C:/Users/N381554/Desktop/MFT_work/Files_moved_log.txt'
-sample = 'file_name,source,destination'
-DEFAULT_CONFIG_PATH = 'C:/Users/Aum/Desktop/File_Management/configuration_set.xlsx'
+DEFAULT_CONFIG_PATH = 'C:/Users/N381554/Desktop/MFT_work/configuration_set.csv'
 
 
 def write_to_file(log):
@@ -19,7 +17,7 @@ def write_to_file(log):
 
 
 def read_config():
-    df = pd.read_excel(DEFAULT_CONFIG_PATH)
+    df = pd.read_csv(DEFAULT_CONFIG_PATH)
     # dropping incomplete configurations
     df = df.dropna(axis=0, how='any', thresh=None, subset=None, inplace=False)
     config_lst = df.values.tolist()
@@ -28,6 +26,3 @@ def read_config():
 
 def write_error_log():
     pass
-
-
-x = read_config()

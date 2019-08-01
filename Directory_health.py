@@ -1,25 +1,47 @@
-mport pandas as pd
-#import Recommend
-# import Recommend
-import timeit
-
+import numpy as np
 import pandas as pd
-
 from Levenshtein import levenshtein_lru, levenshtein_no_lru
-# import Recommend
-# import Recommend
+import Recommend
 import timeit
-
-import pandas as pd
-
-from Levenshtein import levenshtein_lru, levenshtein_no_lru
-
+import Recommend
+import os
+#globals
 TEMP = 'C:/Users/N381554\Desktop\MFT_work'
-df = pd.read_excel('directory_df.xlsx')
+df = pd.read_csv('directory_df.csv')
+FEATURES_CSV = 'features.csv'
+#Thresholds
 COHESION_ALPHA = 0.5
-FEATURES_CSV = 'test.xlsx'
+
+class File_folder_features:
+    folder_median_threshold = 2 
+    format_median_threshold = 1.75
+    format_count_threshold = 0.5
+    filter_types = {'only_size': median_filter,'size_and_share': size_count_filter}
+
+    def median_filter(file_size, format_median, folder_median):
+        if abs(file_size,format_median)>format_median:
+            return True
+        elif abs(file_size,folder_median)>format_median_threshold:
+            return True
+        else
+            return False
+        
+    def size_count_filter(file_size, format_median, folder_median, format_share):
+        if not median_filter(file_size, format_median, folder_median):
+            if format_share<format_count_threshold:
+                return True
+            else:
+                return False
+        else:
+            return False
+
+
+
+
+
+
 def create_features(path=None):
-    df = pd.read_excel('directory_df.xlsx')
+    df = pd.read_csv('directory_df.csv')
     #print(df['Folder_path'].unique())
     df_folders = pd.DataFrame(columns=['Folder_path'])
     df_folders['Folder_path'] = df['Folder_path'].unique()
@@ -54,12 +76,13 @@ def create_features(path=None):
     df_dict = neighbour_cohesion(safe_df, unsafe_df, df)
     safe_df = df_dict.get('safe_df')
     unsafe_df = df_dict.get('unsafe_df')
-    unsafe_df, df = file_folder_affinity(unsafe_df, df, 'test.xlsx')
-    unsafe_df.to_excel('unsafe.xlsx')
-    safe_df.to_excel('safe.xlsx')
-    df.to_excel('modified_directory_df.xlsx')
-    df_folders.to_excel('test.xlsx')
+
+    unsafe_df.to_csv('unsafe.csv')
+    safe_df.to_csv('safe.csv')
+    df.to_csv('modified_directory_df.csv')
+    df_folders.to_csv(FEATURES_CSV)
     print_stats(safe_df,unsafe_df,df)
+    return []
 
 def add_column_folder_dist(df):
     df['Only_file_name'] = df.File_name.str.split('.')
@@ -113,8 +136,10 @@ def neighbour_cohesion(safe_df, unsafe_df, df):
                 dist += levenshtein_no_lru(current_file,n)
 
         neighbours_count = len(neighbours) if len(neighbours)>0 else 1
+        neighbour_distance = dist/neighbours_count
         cohesion_threshold = (dist/neighbours_count) > COHESION_ALPHA*len(current_file)
         unsafe_df.at[row.Index, 'Cohesion_flag'] = cohesion_threshold
+        unsafe_df.at[row.Index, 'Avg_levenstein'] = neighbour_distance
         now_safe = unsafe_df[unsafe_df['Cohesion_flag']==False]
         safe_df = safe_df.append(now_safe, ignore_index=True)
         unsafe_df = unsafe_df[unsafe_df['Cohesion_flag']==True]
@@ -124,22 +149,30 @@ def neighbour_cohesion(safe_df, unsafe_df, df):
     print('neighbour_cohesion'+str(elapsed))
     return {'df': df, 'safe_df': safe_df, 'unsafe_df': unsafe_df}
 
-def file_folder_affinity(unsafe_df, df, features_path='test.xlsx'):
-    feature_df = pd.read_excel(features_path)
-    threshold = 0.1 #Future: make it dynamic user selected
-    df = df.assign(Size_compatibility=0)
-    unsafe_df = unsafe_df.assign(Size_compatibility=0)
-    unsafe_df = unsafe_df.assign(Size_compatibility_flag=False)
-    for row in unsafe_df.itertuples():
-        format_volume = row.Format+'_volume'
-        folder_row = feature_df[feature_df['Folder_path']==row.Folder_path]
-        delta = abs(float(folder_row[format_volume])-float(row.Size_MB))
-        if delta > 0:
-            unsafe_df.at[row.Index, 'Size_compatibility'] = delta
-            '''if delta>threshold*float(folder_row[format_volume]):
-                unsafe_df.at[row.Index, 'Size_compatibility_flag'] = True
-'''
-    return unsafe_df, df
+def file_folder_affinity():
+    '''
+    The features created for folder contents are used here to get file affinity value for current folder.
+    Comparisions done on: Folder median, Format median, Format %
+    '''
+    df_unsafe = pd.read_csv('unsafe.csv')
+    df_directory = pd.read_csv('directory_df.csv')
+    df_features = pd.read_csv('features.csv')
+    for index, row in df_unsafe.iterrows():
+        folder_features = df_features.loc[df_features['Folder_path']==row.Folder_path]
+
+
+    
+    #print(os.path.basename(__file__))
+
+
+
+
+
+
+
+
+
+
 
 #Create a graph here
 def print_stats(safe_df, unsafe_df,df,out_file='results.txt'):
@@ -169,4 +202,5 @@ def print_stats(safe_df, unsafe_df,df,out_file='results.txt'):
     #Recommend.match(unsafe, df, FEATURES_CSV)
     
 
-create_features()
+#create_features()
+file_folder_affinity()

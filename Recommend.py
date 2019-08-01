@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from Levenshtein import levenshtein_lru, levenshtein_no_lru
-unsafe_df = pd.read_excel('unsafe.xlsx')
+unsafe_df = pd.read_csv('unsafe.csv')
 
 def match(unsafe_df, df, features):
     
@@ -10,7 +10,7 @@ def match(unsafe_df, df, features):
     pass
 
 def match_folder_name(file_name, features):
-    features = p.read_excel(features)
+    features = p.read_csv(features)
     df_folder = df[df['Folder']]
     return df
 
